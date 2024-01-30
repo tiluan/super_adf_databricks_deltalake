@@ -1,0 +1,33 @@
+{
+	"name": "pip_Atividade_Juncao",
+	"properties": {
+		"description": "Criar um pipeline com um fluxo de dados que utiliza o arquivo vendas.csv e cliente_cargo.csv\n\nAo final da pipeline gerar um arquivo chamado vendasClienteCargo.csv\n\nNom_cliente, Cargo, Nom_produto, Ano_venda, Mes_venda, Dia_venda, dtc_venda, qtd_venda, val_venda",
+		"activities": [
+			{
+				"name": "df_VendaClientesCargo",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_atividade_juncao",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
