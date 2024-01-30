@@ -1,0 +1,9 @@
+{
+	"name": "adftreinamentoudemy",
+	"location": "brazilsouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8b7faff5-e661-4621-9caa-b7b450b479f0",
+		"tenantId": "450a2b68-6e6f-48c1-a6c7-d5ab26a6cdf5"
+	}
+}
