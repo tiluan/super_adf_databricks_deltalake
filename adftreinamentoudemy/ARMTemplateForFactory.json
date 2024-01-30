@@ -288,6 +288,44 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "df_div_condicional",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "df_uniao",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_div_vendas_20142015",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"vendasagg20142015": {},
+									"saida2014": {},
+									"vendas2015": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -297,7 +335,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/df_agg_vendas_ano')]",
-				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+				"[concat(variables('factoryId'), '/dataflows/dataflow1')]",
+				"[concat(variables('factoryId'), '/dataflows/df_div_vendas_20142015')]"
 			]
 		},
 		{
@@ -463,6 +502,53 @@
 				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
 				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]",
 				"[concat(variables('factoryId'), '/dataflows/df_transform_cliente')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_ExemploJuncao')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "dfExemploJuncao",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_dadosClienteComp",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"vendasmod": {},
+									"vendas": {},
+									"vendasclientecomp": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_dadosClienteComp')]"
 			]
 		},
 		{
@@ -647,15 +733,7 @@
 						"type": "String"
 					},
 					{
-						"name": "cod_cliente",
-						"type": "String"
-					},
-					{
 						"name": "nom_cliente",
-						"type": "String"
-					},
-					{
-						"name": "cod_vendedor",
 						"type": "String"
 					},
 					{
@@ -663,79 +741,7 @@
 						"type": "String"
 					},
 					{
-						"name": "cod_cidade",
-						"type": "String"
-					},
-					{
 						"name": "nom_cidade",
-						"type": "String"
-					},
-					{
-						"name": "cod_produto",
-						"type": "String"
-					},
-					{
-						"name": "Nom_produto",
-						"type": "String"
-					},
-					{
-						"name": "cod_marca",
-						"type": "String"
-					},
-					{
-						"name": "Nom_marca",
-						"type": "String"
-					},
-					{
-						"name": "cod_departamento",
-						"type": "String"
-					},
-					{
-						"name": "nom_departamento",
-						"type": "String"
-					},
-					{
-						"name": "cod_gerencia",
-						"type": "String"
-					},
-					{
-						"name": "nom_gerencia",
-						"type": "String"
-					},
-					{
-						"name": "Ano_venda",
-						"type": "String"
-					},
-					{
-						"name": "Mês_venda",
-						"type": "String"
-					},
-					{
-						"name": "Dia_venda",
-						"type": "String"
-					},
-					{
-						"name": "dtc_venda",
-						"type": "String"
-					},
-					{
-						"name": "qtd_venda",
-						"type": "String"
-					},
-					{
-						"name": "val_venda",
-						"type": "String"
-					},
-					{
-						"name": "num_nota",
-						"type": "String"
-					},
-					{
-						"name": "Latitude",
-						"type": "String"
-					},
-					{
-						"name": "Longitude",
 						"type": "String"
 					}
 				]
@@ -1148,6 +1154,187 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/df_dadosClienteComp')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "file_vendas_mod",
+								"type": "DatasetReference"
+							},
+							"name": "vendasmod"
+						},
+						{
+							"dataset": {
+								"referenceName": "file_vendas",
+								"type": "DatasetReference"
+							},
+							"name": "vendas"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "vendasclientecomp"
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "select1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id_venda as string,",
+						"          nom_cliente as string,",
+						"          nom_vendedor as string,",
+						"          nom_cidade as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> vendasmod",
+						"source(output(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          nom_cliente as string,",
+						"          cod_vendedor as string,",
+						"          nom_vendedor as string,",
+						"          cod_cidade as string,",
+						"          nom_cidade as string,",
+						"          cod_produto as string,",
+						"          Nom_produto as string,",
+						"          cod_marca as string,",
+						"          Nom_marca as string,",
+						"          cod_departamento as string,",
+						"          nom_departamento as string,",
+						"          cod_gerencia as string,",
+						"          nom_gerencia as string,",
+						"          Ano_venda as string,",
+						"          {Mês_venda} as string,",
+						"          Dia_venda as string,",
+						"          dtc_venda as string,",
+						"          qtd_venda as string,",
+						"          val_venda as string,",
+						"          num_nota as string,",
+						"          Latitude as string,",
+						"          Longitude as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> vendas",
+						"vendasmod, vendas join(vendasmod@id_venda == vendas@id_venda,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          id_venda = vendasmod@id_venda,",
+						"          cod_cliente,",
+						"          nom_cliente = vendasmod@nom_cliente,",
+						"          cod_vendedor,",
+						"          nom_vendedor = vendasmod@nom_vendedor,",
+						"          cod_cidade,",
+						"          nom_cidade = vendasmod@nom_cidade",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['vendasclientecomp.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> vendasclientecomp"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]",
+				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/dir_blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_div_vendas_20142015')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "vendasagg20142015"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "saida2014"
+						},
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "vendas2015"
+						}
+					],
+					"transformations": [
+						{
+							"name": "split1"
+						},
+						{
+							"name": "filter1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Ano_venda as short,",
+						"          val_venda_ano as double",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     wildcardPaths:['exemplo_union.csv']) ~> vendasagg20142015",
+						"vendasagg20142015 split(Ano_venda == 2014,",
+						"     disjoint: false) ~> split1@(regra2014, demais)",
+						"split1@regra2014 filter(val_venda_ano < 264703) ~> filter1",
+						"filter1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['vendas_2014.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> saida2014",
+						"split1@demais sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['vendas_2015.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> vendas2015"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/dir_blob')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_transform_cliente')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1228,29 +1415,9 @@
 						"     validateSchema: false,",
 						"     input(",
 						"          id_venda as string,",
-						"          cod_cliente as string,",
 						"          nom_cliente as string,",
-						"          cod_vendedor as string,",
 						"          nom_vendedor as string,",
-						"          cod_cidade as string,",
-						"          nom_cidade as string,",
-						"          cod_produto as string,",
-						"          Nom_produto as string,",
-						"          cod_marca as string,",
-						"          Nom_marca as string,",
-						"          cod_departamento as string,",
-						"          nom_departamento as string,",
-						"          cod_gerencia as string,",
-						"          nom_gerencia as string,",
-						"          Ano_venda as string,",
-						"          {Mês_venda} as string,",
-						"          Dia_venda as string,",
-						"          dtc_venda as string,",
-						"          qtd_venda as string,",
-						"          val_venda as string,",
-						"          num_nota as string,",
-						"          Latitude as string,",
-						"          Longitude as string",
+						"          nom_cidade as string",
 						"     ),",
 						"     partitionFileNames:['/clientefile.csv'],",
 						"     skipDuplicateMapInputs: true,",
