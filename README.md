@@ -27,15 +27,25 @@ Componentes DataFlow
 Parâmetros na Pipeline/Dataflow
 
 ### Orquestração e Dependências
+
 Pipelines
+
 Triggers
-Integration Runtime, LinkedService e Datasets
+
+### Integration Runtime, LinkedService e Datasets
+
 Integration Runtime
+
 LinkedService
+
 Datasets
-Monitorando Cargas e Alertas
+
+### Monitorando Cargas e Alertas
+
 Monitoramento de cargas
+
 Alertas
+
 Preparação do ambiente
 
 O primeiro passo para começar a usar o Azure Data Factory é preparar o ambiente. Isso inclui criar um banco de dados SQL Azure e criar tabelas no banco de dados. Também é necessário provisionar o Azure Data Factory.
