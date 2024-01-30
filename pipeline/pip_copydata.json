@@ -1,0 +1,141 @@
+{
+	"name": "pip_copydata",
+	"properties": {
+		"description": "Criar uma pipeline \"pip_copydata\" copiando os dados do arquivo vendas.csv copiando os atributos Ano_venda, Mês_venda, Dia_venda, dtc_venda, qtd_venda, val_venda para um arquivo denominado val_vendas.csv",
+		"activities": [
+			{
+				"name": "CopyData_val_vendas",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Ano_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Ano_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Mês_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Mês_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Dia_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Dia_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "dtc_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "dtc_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "qtd_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "qtd_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "val_venda",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "val_venda",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "file_vendas",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "val_vendas",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
