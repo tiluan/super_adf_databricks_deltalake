@@ -574,7 +574,12 @@
 							"dataflow": {
 								"referenceName": "df_dadosClienteComp",
 								"type": "DataFlowReference",
-								"parameters": {},
+								"parameters": {
+									"p_numLote": {
+										"value": "'@{pipeline().parameters.numlote}'",
+										"type": "Expression"
+									}
+								},
 								"datasetParameters": {
 									"vendasmod": {},
 									"vendas": {},
@@ -592,6 +597,12 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"numlote": {
+						"type": "string",
+						"defaultValue": "5"
+					}
 				},
 				"annotations": []
 			},
@@ -1350,9 +1361,15 @@
 						},
 						{
 							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
 						}
 					],
 					"scriptLines": [
+						"parameters{",
+						"     p_numLote as string",
+						"}",
 						"source(output(",
 						"          id_venda as string,",
 						"          nom_cliente as string,",
@@ -1407,7 +1424,8 @@
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 sink(allowSchemaDrift: true,",
+						"select1 derive(num_lote = $p_numLote) ~> derivedColumn1",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     partitionFileNames:['vendasclientecomp.csv'],",
 						"     skipDuplicateMapInputs: true,",
