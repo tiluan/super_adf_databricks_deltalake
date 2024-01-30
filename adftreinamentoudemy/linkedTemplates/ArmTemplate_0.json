@@ -663,7 +663,7 @@
 						"          Latitude as string,",
 						"          Longitude as string",
 						"     ),",
-						"     partitionFileNames:['fontes/clientefile.csv'],",
+						"     partitionFileNames:['/clientefile.csv'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> filecliente"
@@ -793,14 +793,7 @@
 					{
 						"name": "TransformaDados",
 						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "CopiarDadosNotaFiscal",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
+						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
