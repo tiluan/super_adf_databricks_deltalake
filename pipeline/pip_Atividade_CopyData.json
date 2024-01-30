@@ -1,5 +1,5 @@
 {
-	"name": "pip_copydata",
+	"name": "pip_Atividade_CopyData",
 	"properties": {
 		"description": "Criar uma pipeline \"pip_copydata\" copiando os dados do arquivo vendas.csv copiando os atributos Ano_venda, Mês_venda, Dia_venda, dtc_venda, qtd_venda, val_venda para um arquivo denominado val_vendas.csv",
 		"activities": [
