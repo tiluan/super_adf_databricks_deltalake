@@ -282,6 +282,131 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/val_vendas')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlobStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "val_vendas.csv",
+						"container": "fontes"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "id_venda",
+						"type": "String"
+					},
+					{
+						"name": "cod_cliente",
+						"type": "String"
+					},
+					{
+						"name": "nom_cliente",
+						"type": "String"
+					},
+					{
+						"name": "cod_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "nom_vendedor",
+						"type": "String"
+					},
+					{
+						"name": "cod_cidade",
+						"type": "String"
+					},
+					{
+						"name": "nom_cidade",
+						"type": "String"
+					},
+					{
+						"name": "cod_produto",
+						"type": "String"
+					},
+					{
+						"name": "Nom_produto",
+						"type": "String"
+					},
+					{
+						"name": "cod_marca",
+						"type": "String"
+					},
+					{
+						"name": "Nom_marca",
+						"type": "String"
+					},
+					{
+						"name": "cod_departamento",
+						"type": "String"
+					},
+					{
+						"name": "nom_departamento",
+						"type": "String"
+					},
+					{
+						"name": "cod_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "nom_gerencia",
+						"type": "String"
+					},
+					{
+						"name": "Ano_venda",
+						"type": "String"
+					},
+					{
+						"name": "M�s_venda",
+						"type": "String"
+					},
+					{
+						"name": "Dia_venda",
+						"type": "String"
+					},
+					{
+						"name": "dtc_venda",
+						"type": "String"
+					},
+					{
+						"name": "qtd_venda",
+						"type": "String"
+					},
+					{
+						"name": "val_venda",
+						"type": "String"
+					},
+					{
+						"name": "num_nota",
+						"type": "String"
+					},
+					{
+						"name": "Latitude",
+						"type": "String"
+					},
+					{
+						"name": "Longitude",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pip_ExemploCopyData')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -406,6 +531,158 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
 				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_copydata')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Criar uma pipeline \"pip_copydata\" copiando os dados do arquivo vendas.csv copiando os atributos Ano_venda, Mês_venda, Dia_venda, dtc_venda, qtd_venda, val_venda para um arquivo denominado val_vendas.csv",
+				"activities": [
+					{
+						"name": "CopyData_val_vendas",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "file_vendas",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "val_vendas",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/val_vendas')]"
 			]
 		}
 	]
