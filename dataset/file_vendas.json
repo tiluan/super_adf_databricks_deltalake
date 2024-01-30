@@ -1,0 +1,121 @@
+{
+	"name": "file_vendas",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "vendas.csv",
+				"container": "fontes"
+			},
+			"columnDelimiter": ",",
+			"encodingName": "WINDOWS-1252",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id_venda",
+				"type": "String"
+			},
+			{
+				"name": "cod_cliente",
+				"type": "String"
+			},
+			{
+				"name": "nom_cliente",
+				"type": "String"
+			},
+			{
+				"name": "cod_vendedor",
+				"type": "String"
+			},
+			{
+				"name": "nom_vendedor",
+				"type": "String"
+			},
+			{
+				"name": "cod_cidade",
+				"type": "String"
+			},
+			{
+				"name": "nom_cidade",
+				"type": "String"
+			},
+			{
+				"name": "cod_produto",
+				"type": "String"
+			},
+			{
+				"name": "Nom_produto",
+				"type": "String"
+			},
+			{
+				"name": "cod_marca",
+				"type": "String"
+			},
+			{
+				"name": "Nom_marca",
+				"type": "String"
+			},
+			{
+				"name": "cod_departamento",
+				"type": "String"
+			},
+			{
+				"name": "nom_departamento",
+				"type": "String"
+			},
+			{
+				"name": "cod_gerencia",
+				"type": "String"
+			},
+			{
+				"name": "nom_gerencia",
+				"type": "String"
+			},
+			{
+				"name": "Ano_venda",
+				"type": "String"
+			},
+			{
+				"name": "Mês_venda",
+				"type": "String"
+			},
+			{
+				"name": "Dia_venda",
+				"type": "String"
+			},
+			{
+				"name": "dtc_venda",
+				"type": "String"
+			},
+			{
+				"name": "qtd_venda",
+				"type": "String"
+			},
+			{
+				"name": "val_venda",
+				"type": "String"
+			},
+			{
+				"name": "num_nota",
+				"type": "String"
+			},
+			{
+				"name": "Latitude",
+				"type": "String"
+			},
+			{
+				"name": "Longitude",
+				"type": "String"
+			}
+		]
+	}
+}
