@@ -27,6 +27,9 @@
 				},
 				{
 					"name": "agganovenda"
+				},
+				{
+					"name": "rankVendaMesAno"
 				}
 			],
 			"scriptLines": [
@@ -61,15 +64,20 @@
 				"     ignoreNoFilesFound: false) ~> vendas",
 				"vendas select(mapColumn(",
 				"          Ano_venda,",
+				"          {Mês_venda},",
 				"          val_venda",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 aggregate(groupBy(Ano_venda),",
-				"     val_venda_ano = sum(toDouble(val_venda))) ~> agganovenda",
-				"agganovenda sink(allowSchemaDrift: true,",
+				"select1 aggregate(groupBy(Ano_venda,",
+				"          {Mês_venda}),",
+				"     val_venda_mes_ano = sum(toDouble(val_venda))) ~> agganovenda",
+				"agganovenda rank(desc(val_venda_mes_ano, true),",
+				"     asc({Mês_venda}, true),",
+				"     output(rankTopVenda as long)) ~> rankVendaMesAno",
+				"rankVendaMesAno sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     partitionFileNames:['vendaaggano.csv'],",
+				"     partitionFileNames:['vendaaggmesano.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
 				"     partitionBy('hash', 1)) ~> filevendaaggano"
