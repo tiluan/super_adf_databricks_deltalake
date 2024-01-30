@@ -1,18 +1,26 @@
 # SUPER Data Factory, Databricks e Databricks Delta Lake
-Azure Data Factory, Databricks e Databricks Delta Lake
 
 Este repositório contém os arquivos do curso de Azure Data Factory.
 
+O curso foi ministrado pelo Juracy Araujo de Almeida Junior, que é um especialista em engenharia de dados, Professor das pós-graduações das universidades CATÓLICA DO SALVADOR, UFBA, UNIRUY e ESTÁCIO FIB em disciplinas das áreas de Business Intelligence e Banco de Dados.
+
+Curso disponível em https://www.udemy.com/course/curso-super-data-factory-databricks-e-databricks-delta-lake/
+
 O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
 
-# Preparação do ambiente
+## Preparação do ambiente
+
 Criação de um banco de dados SQL Azure
 Criação de tabelas no banco de dados SQL Azure
 Provisionamento do Azure Data Factory
-Copy Data
+
+## Copy Data
+
 Importação de dados de um arquivo CSV para o banco de dados SQL Azure
 Importação de dados de um serviço Web para o banco de dados SQL Azure
-DataFlow
+
+## DataFlow
+
 Origem de dados
 Componentes DataFlow
 Parâmetros na Pipeline/Dataflow
@@ -80,6 +88,4 @@ Orquestrar as atividades do ADF usando pipelines
 Conectar o ADF a diferentes origens de dados
 Monitorar cargas e enviar alertas
 
-O curso foi ministrado pelo Juracy Araujo de Almeida Junior, que é um especialista em engenharia de dados, Professor das pós-graduações das universidades CATÓLICA DO SALVADOR, UFBA, UNIRUY e ESTÁCIO FIB em disciplinas das áreas de Business Intelligence e Banco de Dados.
 
-Curso disponível em https://www.udemy.com/course/curso-super-data-factory-databricks-e-databricks-delta-lake/
