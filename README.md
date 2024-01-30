@@ -5,7 +5,7 @@ Este repositório contém os arquivos do curso de Azure Data Factory.
 
 O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
 
-Preparação do ambiente
+# Preparação do ambiente
 Criação de um banco de dados SQL Azure
 Criação de tabelas no banco de dados SQL Azure
 Provisionamento do Azure Data Factory
