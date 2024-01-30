@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "file_vendas_mod",
+						"referenceName": "file_vendas",
 						"type": "DatasetReference"
 					},
 					"name": "vendas"
@@ -70,7 +70,7 @@
 				"     skipDuplicateMapOutputs: true) ~> select1",
 				"select1 derive(nomeclienteMaiusculo = upper(nomecliente)) ~> derivedColumn1",
 				"derivedColumn1 cast(output(",
-				"          idcliente as integer",
+				"          nomeclienteMaiusculo as string",
 				"     ),",
 				"     errors: true) ~> cast1",
 				"cast1 sink(allowSchemaDrift: true,",
