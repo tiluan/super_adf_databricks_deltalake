@@ -1,7 +1,9 @@
 # super_adf_databricks_deltalake
 Azure Data Factory, Databricks e Databricks Delta Lake
 
-Este repositório contém os arquivos do curso de Azure Data Factory, ministrado pelo [instrutor]. O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
+Este repositório contém os arquivos do curso de Azure Data Factory.
+
+O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
 
 Preparação do ambiente
 Criação de um banco de dados SQL Azure
