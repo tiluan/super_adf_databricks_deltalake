@@ -8,23 +8,25 @@ Curso disponível em https://www.udemy.com/course/curso-super-data-factory-datab
 
 O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
 
-## Preparação do ambiente
+### Preparação do ambiente
 
 Criação de um banco de dados SQL Azure
 Criação de tabelas no banco de dados SQL Azure
 Provisionamento do Azure Data Factory
 
-## Copy Data
+### Copy Data
 
 Importação de dados de um arquivo CSV para o banco de dados SQL Azure
-Importação de dados de um serviço Web para o banco de dados SQL Azure
 
-## DataFlow
+### DataFlow
 
 Origem de dados
+
 Componentes DataFlow
+
 Parâmetros na Pipeline/Dataflow
-Orquestração e Dependências
+
+### Orquestração e Dependências
 Pipelines
 Triggers
 Integration Runtime, LinkedService e Datasets
