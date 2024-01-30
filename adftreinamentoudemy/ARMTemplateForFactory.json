@@ -131,6 +131,43 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "TransformaDados",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "CopiarDadosNotaFiscal",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_transform_cliente",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"vendas": {},
+									"filecliente": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
 					}
 				],
 				"policy": {
@@ -140,7 +177,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
-				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]"
+				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]",
+				"[concat(variables('factoryId'), '/dataflows/df_transform_cliente')]"
 			]
 		},
 		{
@@ -684,6 +722,122 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_transform_cliente')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "file_vendas_mod",
+								"type": "DatasetReference"
+							},
+							"name": "vendas"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "file_vendas_mod",
+								"type": "DatasetReference"
+							},
+							"name": "filecliente"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "cast1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          nom_cliente as string,",
+						"          cod_vendedor as string,",
+						"          nom_vendedor as string,",
+						"          cod_cidade as string,",
+						"          nom_cidade as string,",
+						"          cod_produto as string,",
+						"          Nom_produto as string,",
+						"          cod_marca as string,",
+						"          Nom_marca as string,",
+						"          cod_departamento as string,",
+						"          nom_departamento as string,",
+						"          cod_gerencia as string,",
+						"          nom_gerencia as string,",
+						"          Ano_venda as string,",
+						"          {Mês_venda} as string,",
+						"          Dia_venda as string,",
+						"          dtc_venda as string,",
+						"          qtd_venda as string,",
+						"          val_venda as string,",
+						"          num_nota as string,",
+						"          Latitude as string,",
+						"          Longitude as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> vendas",
+						"vendas select(mapColumn(",
+						"          idcliente = cod_cliente,",
+						"          nomecliente = nom_cliente",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(nomeclienteMaiusculo = upper(nomecliente)) ~> derivedColumn1",
+						"derivedColumn1 cast(output(",
+						"          idcliente as integer",
+						"     ),",
+						"     errors: true) ~> cast1",
+						"cast1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          nom_cliente as string,",
+						"          cod_vendedor as string,",
+						"          nom_vendedor as string,",
+						"          cod_cidade as string,",
+						"          nom_cidade as string,",
+						"          cod_produto as string,",
+						"          Nom_produto as string,",
+						"          cod_marca as string,",
+						"          Nom_marca as string,",
+						"          cod_departamento as string,",
+						"          nom_departamento as string,",
+						"          cod_gerencia as string,",
+						"          nom_gerencia as string,",
+						"          Ano_venda as string,",
+						"          {Mês_venda} as string,",
+						"          Dia_venda as string,",
+						"          dtc_venda as string,",
+						"          qtd_venda as string,",
+						"          val_venda as string,",
+						"          num_nota as string,",
+						"          Latitude as string,",
+						"          Longitude as string",
+						"     ),",
+						"     partitionFileNames:['fontes/clientefile.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> filecliente"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]"
+			]
 		}
 	]
 }
