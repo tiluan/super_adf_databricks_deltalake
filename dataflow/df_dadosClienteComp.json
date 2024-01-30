@@ -1,9 +1,16 @@
 {
-	"name": "df_transform_cliente",
+	"name": "df_dadosClienteComp",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
+				{
+					"dataset": {
+						"referenceName": "file_vendas_mod",
+						"type": "DatasetReference"
+					},
+					"name": "vendasmod"
+				},
 				{
 					"dataset": {
 						"referenceName": "file_vendas",
@@ -15,24 +22,30 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "file_vendas_mod",
+						"referenceName": "dir_blob",
 						"type": "DatasetReference"
 					},
-					"name": "filecliente"
+					"name": "vendasclientecomp"
 				}
 			],
 			"transformations": [
 				{
+					"name": "join1"
+				},
+				{
 					"name": "select1"
-				},
-				{
-					"name": "derivedColumn1"
-				},
-				{
-					"name": "cast1"
 				}
 			],
 			"scriptLines": [
+				"source(output(",
+				"          id_venda as string,",
+				"          nom_cliente as string,",
+				"          nom_vendedor as string,",
+				"          nom_cidade as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> vendasmod",
 				"source(output(",
 				"          id_venda as string,",
 				"          cod_cliente as string,",
@@ -62,29 +75,28 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> vendas",
-				"vendas select(mapColumn(",
-				"          idcliente = cod_cliente,",
-				"          nomecliente = nom_cliente",
+				"vendasmod, vendas join(vendasmod@id_venda == vendas@id_venda,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          id_venda = vendasmod@id_venda,",
+				"          cod_cliente,",
+				"          nom_cliente = vendasmod@nom_cliente,",
+				"          cod_vendedor,",
+				"          nom_vendedor = vendasmod@nom_vendedor,",
+				"          cod_cidade,",
+				"          nom_cidade = vendasmod@nom_cidade",
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"select1 derive(nomeclienteMaiusculo = upper(nomecliente)) ~> derivedColumn1",
-				"derivedColumn1 cast(output(",
-				"          nomeclienteMaiusculo as string",
-				"     ),",
-				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"select1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     input(",
-				"          id_venda as string,",
-				"          nom_cliente as string,",
-				"          nom_vendedor as string,",
-				"          nom_cidade as string",
-				"     ),",
-				"     partitionFileNames:['/clientefile.csv'],",
+				"     partitionFileNames:['vendasclientecomp.csv'],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> filecliente"
+				"     partitionBy('hash', 1)) ~> vendasclientecomp"
 			]
 		}
 	}
