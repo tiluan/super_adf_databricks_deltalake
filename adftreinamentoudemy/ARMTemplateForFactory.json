@@ -17,6 +17,205 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/pip_Atividade_Agg')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Criar uma pipeline com um fluxo de dados que utiliza o arquivo de vendas com os seguintes campos:\n\nNom_produto, Ano_venda, Mes_venda, Dia_venda, dtc_venda, qtd_venda, val_venda\n\nGerar um arquivo vendasDIA.csv que represente a MÉDIA QUANTIDATIVA por dia e nome_produto",
+				"activities": [
+					{
+						"name": "df_atividade_agg",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_atividade_agg",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"VendasDiafile": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_atividade_agg')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pip_Atividade_CopyData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Criar uma pipeline \"pip_copydata\" copiando os dados do arquivo vendas.csv copiando os atributos Ano_venda, Mês_venda, Dia_venda, dtc_venda, qtd_venda, val_venda para um arquivo denominado val_vendas.csv",
+				"activities": [
+					{
+						"name": "CopyData_val_vendas",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Ano_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Mês_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Dia_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "dtc_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "qtd_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "val_venda",
+											"type": "String",
+											"physicalType": "String"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "file_vendas",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "val_vendas",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/val_vendas')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pip_ExemploAggClassif')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -225,158 +424,6 @@
 				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
 				"[concat(variables('factoryId'), '/datasets/file_vendas_mod')]",
 				"[concat(variables('factoryId'), '/dataflows/df_transform_cliente')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pip_copydata')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Criar uma pipeline \"pip_copydata\" copiando os dados do arquivo vendas.csv copiando os atributos Ano_venda, Mês_venda, Dia_venda, dtc_venda, qtd_venda, val_venda para um arquivo denominado val_vendas.csv",
-				"activities": [
-					{
-						"name": "CopyData_val_vendas",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "Ano_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Ano_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Mês_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Mês_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "Dia_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Dia_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "dtc_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "dtc_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "qtd_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "qtd_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									},
-									{
-										"source": {
-											"name": "val_venda",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "val_venda",
-											"type": "String",
-											"physicalType": "String"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "file_vendas",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "val_vendas",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
-				"[concat(variables('factoryId'), '/datasets/val_vendas')]"
 			]
 		},
 		{
@@ -881,6 +928,99 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> filevendaaggano"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/dir_blob')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_atividade_agg')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "file_vendas",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "VendasDiafile"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          nom_cliente as string,",
+						"          cod_vendedor as string,",
+						"          nom_vendedor as string,",
+						"          cod_cidade as string,",
+						"          nom_cidade as string,",
+						"          cod_produto as string,",
+						"          Nom_produto as string,",
+						"          cod_marca as string,",
+						"          Nom_marca as string,",
+						"          cod_departamento as string,",
+						"          nom_departamento as string,",
+						"          cod_gerencia as string,",
+						"          nom_gerencia as string,",
+						"          Ano_venda as string,",
+						"          {Mês_venda} as string,",
+						"          Dia_venda as string,",
+						"          dtc_venda as string,",
+						"          qtd_venda as string,",
+						"          val_venda as string,",
+						"          num_nota as string,",
+						"          Latitude as string,",
+						"          Longitude as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          Nom_produto,",
+						"          Ano_venda,",
+						"          {Mês_venda},",
+						"          Dia_venda,",
+						"          dtc_venda,",
+						"          qtd_venda,",
+						"          val_venda",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(Nom_produto,",
+						"          Ano_venda,",
+						"          {Mês_venda},",
+						"          Dia_venda),",
+						"     MEDIA_QUANTITATIVA = avg(toDouble(qtd_venda))) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['vendasDIA.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> VendasDiafile"
 					]
 				}
 			},
