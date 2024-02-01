@@ -1,0 +1,87 @@
+{
+	"name": "df_transforma_produto",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "file_vendas",
+						"type": "DatasetReference"
+					},
+					"name": "filevendas"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dir_blob",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id_venda as string,",
+				"          cod_cliente as string,",
+				"          nom_cliente as string,",
+				"          cod_vendedor as string,",
+				"          nom_vendedor as string,",
+				"          cod_cidade as string,",
+				"          nom_cidade as string,",
+				"          cod_produto as string,",
+				"          Nom_produto as string,",
+				"          cod_marca as string,",
+				"          Nom_marca as string,",
+				"          cod_departamento as string,",
+				"          nom_departamento as string,",
+				"          cod_gerencia as string,",
+				"          nom_gerencia as string,",
+				"          Ano_venda as string,",
+				"          {Mês_venda} as string,",
+				"          Dia_venda as string,",
+				"          dtc_venda as string,",
+				"          qtd_venda as string,",
+				"          val_venda as string,",
+				"          num_nota as string,",
+				"          Latitude as string,",
+				"          Longitude as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> filevendas",
+				"filevendas select(mapColumn(",
+				"          idproduto = cod_produto,",
+				"          nomeproduto = Nom_produto,",
+				"          nomecategoria = nom_departamento",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(idproduto,",
+				"          nomeproduto,",
+				"          nomecategoria),",
+				"     idprodutoagg = first(idproduto)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['fileproduto.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          idproduto,",
+				"          nomeproduto,",
+				"          nomecategoria",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
