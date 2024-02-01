@@ -89,6 +89,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Exemplos"
+		},
 		"annotations": []
 	}
 }

@@ -142,6 +142,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Exemplos"
+		},
 		"annotations": []
 	}
 }

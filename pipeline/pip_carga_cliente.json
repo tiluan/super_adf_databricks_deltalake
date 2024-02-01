@@ -1,9 +1,9 @@
 {
-	"name": "pip_ExemploJuncao",
+	"name": "pip_carga_cliente",
 	"properties": {
 		"activities": [
 			{
-				"name": "dfExemploJuncao",
+				"name": "df_transf_cliente",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,14 +16,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_dadosClienteComp",
-						"type": "DataFlowReference",
-						"parameters": {
-							"p_numLote": {
-								"value": "'@{pipeline().parameters.numlote}'",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "df_transforma_cliente",
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
@@ -33,14 +27,8 @@
 				}
 			}
 		],
-		"parameters": {
-			"numlote": {
-				"type": "string",
-				"defaultValue": "5"
-			}
-		},
 		"folder": {
-			"name": "Exemplos"
+			"name": "Projeto"
 		},
 		"annotations": []
 	}
