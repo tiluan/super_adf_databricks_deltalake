@@ -667,6 +667,100 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "carga_cliente_bd",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "df_transf_cliente",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "saidacargacliente.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"idcliente"
+									]
+								},
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id_cliente",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "idcliente",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "nomecliente",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "nomecliente",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "dir_blob",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tbl_cliente",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
 					}
 				],
 				"policy": {
@@ -678,7 +772,9 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_transforma_cliente')]"
+				"[concat(variables('factoryId'), '/dataflows/df_transforma_cliente')]",
+				"[concat(variables('factoryId'), '/datasets/dir_blob')]",
+				"[concat(variables('factoryId'), '/datasets/tbl_cliente')]"
 			]
 		},
 		{
@@ -1934,6 +2030,21 @@
 				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
 				"[concat(variables('factoryId'), '/datasets/dir_blob')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Projeto"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		}
 	]
 }
