@@ -1,0 +1,30 @@
+{
+	"name": "tb_produto",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "idproduto",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomeproduto",
+				"type": "varchar"
+			},
+			{
+				"name": "nomecategoria",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "produto"
+		}
+	}
+}

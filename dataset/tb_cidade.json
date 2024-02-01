@@ -1,0 +1,26 @@
+{
+	"name": "tb_cidade",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "idcidade",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomecidade",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cidade"
+		}
+	}
+}

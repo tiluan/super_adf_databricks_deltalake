@@ -1,0 +1,26 @@
+{
+	"name": "tbl_cliente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "idcliente",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nomecliente",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "cliente"
+		}
+	}
+}

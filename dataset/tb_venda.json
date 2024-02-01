@@ -1,0 +1,47 @@
+{
+	"name": "tb_venda",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "idvenda",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idcliente",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idcidade",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "idproduto",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quantidade",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "valor_total",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "venda"
+		}
+	}
+}
