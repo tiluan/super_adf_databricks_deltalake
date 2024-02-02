@@ -1,0 +1,108 @@
+{
+	"name": "df_transforma_venda",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vendas_sem_cliente",
+						"type": "DatasetReference"
+					},
+					"name": "vendassemclietne"
+				},
+				{
+					"dataset": {
+						"referenceName": "vendas_cliente",
+						"type": "DatasetReference"
+					},
+					"name": "vendascliente"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dir_blob",
+						"type": "DatasetReference"
+					},
+					"name": "filevendasfinal"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filevendas"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id_venda as string,",
+				"          cod_vendedor as string,",
+				"          nom_vendedor as string,",
+				"          cod_produto as string,",
+				"          Nom_produto as string,",
+				"          cod_marca as string,",
+				"          Nom_marca as string,",
+				"          cod_departamento as string,",
+				"          nom_departamento as string,",
+				"          cod_gerencia as string,",
+				"          nom_gerencia as string,",
+				"          Ano_venda as string,",
+				"          {M�s_venda} as string,",
+				"          Dia_venda as string,",
+				"          dtc_venda as string,",
+				"          qtd_venda as string,",
+				"          val_venda as string,",
+				"          num_nota as string,",
+				"          Latitude as string,",
+				"          Longitude as string,",
+				"          nom_cidade as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> vendassemclietne",
+				"source(output(",
+				"          id_venda as string,",
+				"          cod_cliente as string,",
+				"          cod_cidade as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> vendascliente",
+				"vendassemclietne select(mapColumn(",
+				"          id_venda,",
+				"          cod_produto,",
+				"          qtd_venda,",
+				"          val_venda",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> filevendas",
+				"filevendas, vendascliente join(filevendas@id_venda == vendascliente@id_venda,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          idvenda = filevendas@id_venda,",
+				"          idproduto = cod_produto,",
+				"          quantidade = qtd_venda,",
+				"          valor_total = val_venda,",
+				"          idcliente = cod_cliente",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['filevendasfinal.csv'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> filevendasfinal"
+			]
+		}
+	}
+}

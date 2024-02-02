@@ -1,0 +1,36 @@
+{
+	"name": "vendas_cliente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "vendas-cliente.csv",
+				"container": "fontes"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id_venda",
+				"type": "String"
+			},
+			{
+				"name": "cod_cliente",
+				"type": "String"
+			},
+			{
+				"name": "cod_cidade",
+				"type": "String"
+			}
+		]
+	}
+}
