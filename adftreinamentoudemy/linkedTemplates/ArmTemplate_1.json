@@ -13,6 +13,97 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/df_transforma_cliente')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "file_vendas",
+								"type": "DatasetReference"
+							},
+							"name": "filevendas"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dir_blob",
+								"type": "DatasetReference"
+							},
+							"name": "saidacargacliente"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          nom_cliente as string,",
+						"          cod_vendedor as string,",
+						"          nom_vendedor as string,",
+						"          cod_cidade as string,",
+						"          nom_cidade as string,",
+						"          cod_produto as string,",
+						"          Nom_produto as string,",
+						"          cod_marca as string,",
+						"          Nom_marca as string,",
+						"          cod_departamento as string,",
+						"          nom_departamento as string,",
+						"          cod_gerencia as string,",
+						"          nom_gerencia as string,",
+						"          Ano_venda as string,",
+						"          {Mês_venda} as string,",
+						"          Dia_venda as string,",
+						"          dtc_venda as string,",
+						"          qtd_venda as string,",
+						"          val_venda as string,",
+						"          num_nota as string,",
+						"          Latitude as string,",
+						"          Longitude as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> filevendas",
+						"filevendas select(mapColumn(",
+						"          id_cliente = cod_cliente,",
+						"          nomecliente = nom_cliente",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 derive(nomecliente = upper(nomecliente)) ~> derivedColumn1",
+						"derivedColumn1 aggregate(groupBy(id_cliente,",
+						"          nomecliente),",
+						"     idclienteagg = first(id_cliente)) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['saidacargacliente.csv'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          id_cliente,",
+						"          nomecliente",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> saidacargacliente"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/df_transforma_produto')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -198,7 +289,8 @@
 						"          idproduto = cod_produto,",
 						"          quantidade = qtd_venda,",
 						"          valor_total = val_venda,",
-						"          idcliente = cod_cliente",
+						"          idcliente = cod_cliente,",
+						"          { idcidade} = cod_cidade",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
@@ -736,6 +828,116 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/pip_carga_cidade')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "df_transforma_cidade",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_transforma_cidade",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"vendassemcliente": {},
+									"vendascliente": {},
+									"filecidadefinal": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "df_transforma_cidade",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"wildcardFileName": "filecidadefinal.csv",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlServerSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "dir_blob",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "tb_cidade",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Projeto"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pip_carga_cliente')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -874,7 +1076,9 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_transforma_cliente')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pip_carga_produto')]",

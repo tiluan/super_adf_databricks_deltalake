@@ -1411,7 +1411,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/df_transforma_cliente')]",
+			"name": "[concat(parameters('factoryName'), '/df_transforma_cidade')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1420,10 +1420,17 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "file_vendas",
+								"referenceName": "vendas_sem_cliente",
 								"type": "DatasetReference"
 							},
-							"name": "filevendas"
+							"name": "vendassemcliente"
+						},
+						{
+							"dataset": {
+								"referenceName": "vendas_cliente",
+								"type": "DatasetReference"
+							},
+							"name": "vendascliente"
 						}
 					],
 					"sinks": [
@@ -1432,29 +1439,25 @@
 								"referenceName": "dir_blob",
 								"type": "DatasetReference"
 							},
-							"name": "saidacargacliente"
+							"name": "filecidadefinal"
 						}
 					],
 					"transformations": [
 						{
+							"name": "selectvendassemcliente"
+						},
+						{
+							"name": "join1"
+						},
+						{
 							"name": "select1"
-						},
-						{
-							"name": "derivedColumn1"
-						},
-						{
-							"name": "aggregate1"
 						}
 					],
 					"scriptLines": [
 						"source(output(",
 						"          id_venda as string,",
-						"          cod_cliente as string,",
-						"          nom_cliente as string,",
 						"          cod_vendedor as string,",
 						"          nom_vendedor as string,",
-						"          cod_cidade as string,",
-						"          nom_cidade as string,",
 						"          cod_produto as string,",
 						"          Nom_produto as string,",
 						"          cod_marca as string,",
@@ -1464,43 +1467,56 @@
 						"          cod_gerencia as string,",
 						"          nom_gerencia as string,",
 						"          Ano_venda as string,",
-						"          {Mês_venda} as string,",
+						"          {M�s_venda} as string,",
 						"          Dia_venda as string,",
 						"          dtc_venda as string,",
 						"          qtd_venda as string,",
 						"          val_venda as string,",
 						"          num_nota as string,",
 						"          Latitude as string,",
-						"          Longitude as string",
+						"          Longitude as string,",
+						"          nom_cidade as string",
 						"     ),",
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> filevendas",
-						"filevendas select(mapColumn(",
-						"          id_cliente = cod_cliente,",
-						"          nomecliente = nom_cliente",
+						"     ignoreNoFilesFound: false) ~> vendassemcliente",
+						"source(output(",
+						"          id_venda as string,",
+						"          cod_cliente as string,",
+						"          cod_cidade as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> vendascliente",
+						"vendassemcliente select(mapColumn(",
+						"          id_venda,",
+						"          nom_cidade",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> selectvendassemcliente",
+						"selectvendassemcliente, vendascliente join(selectvendassemcliente@id_venda == vendascliente@id_venda,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 select(mapColumn(",
+						"          idcidade = cod_cidade,",
+						"          nomecidade = nom_cidade",
 						"     ),",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true) ~> select1",
-						"select1 derive(nomecliente = upper(nomecliente)) ~> derivedColumn1",
-						"derivedColumn1 aggregate(groupBy(id_cliente,",
-						"          nomecliente),",
-						"     idclienteagg = first(id_cliente)) ~> aggregate1",
-						"aggregate1 sink(allowSchemaDrift: true,",
+						"select1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
-						"     partitionFileNames:['saidacargacliente.csv'],",
+						"     partitionFileNames:['filecidadefinal.csv'],",
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
-						"     mapColumn(",
-						"          id_cliente,",
-						"          nomecliente",
-						"     ),",
-						"     partitionBy('hash', 1)) ~> saidacargacliente"
+						"     partitionBy('hash', 1)) ~> filecidadefinal"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/file_vendas')]",
+				"[concat(variables('factoryId'), '/datasets/vendas_sem_cliente')]",
+				"[concat(variables('factoryId'), '/datasets/vendas_cliente')]",
 				"[concat(variables('factoryId'), '/datasets/dir_blob')]"
 			]
 		}
