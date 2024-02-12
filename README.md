@@ -10,27 +10,38 @@ O curso aborda os principais conceitos e funcionalidades do ADF, incluindo:
 
 ### Preparação do Ambiente:
 
-Criação de um banco de dados SQL Azure
-Criação de tabelas no banco de dados SQL Azure
-Provisionamento do Azure Data Factory
+- Criação de um banco de dados SQL Azure
+
+- Criação de tabelas no banco de dados SQL Azure
+
+- Provisionamento do Azure Data Factory
+
 ### Copy Data:
 
-Importação de dados de um arquivo CSV para o banco de dados SQL Azure
-Importação de dados de um serviço Web para o banco de dados SQL Azure
+- Importação de dados de um arquivo CSV para o banco de dados SQL Azure
+
 ### DataFlow:
 
-Origem de dados: Origem de arquivo e Origem de banco de dados
-Componentes DataFlow: Seleção/Coluna Derivada, Agregação, Rank/Classificação, União, Divisão Condicional e Junção
+- Origem de dados: Origem de arquivo e Origem de banco de dados
+
+- Componentes DataFlow: Seleção/Coluna Derivada, Agregação, Rank/Classificação, União, Divisão Condicional e Junção
+
 ### Orquestração e Dependências:
 
-Pipelines: A unidade básica de trabalho do Azure Data Factory
-Triggers: Automatização da execução de pipelines
+- Pipelines: A unidade básica de trabalho do Azure Data Factory
+
+- Triggers: Automatização da execução de pipelines
+
 ### Integration Runtime, Linked Service e Datasets:
 
-Integration Runtime: Conexão do ADF a diferentes origens de dados
-Linked Service: Armazenamento de informações de conexão a uma origem de dados
-Dataset: Armazenamento de informações sobre os dados que serão manipulados pelo ADF
+- Integration Runtime: Conexão do ADF a diferentes origens de dados
+
+- Linked Service: Armazenamento de informações de conexão a uma origem de dados
+
+- Dataset: Armazenamento de informações sobre os dados que serão manipulados pelo ADF
+
 ### Monitorando Cargas e Alertas:
 
-Monitoramento de pipeline e DataFlow
-Alertas: Notificação sobre eventos específicos
+- Monitoramento de pipeline e DataFlow
+
+- Alertas: Notificação sobre eventos específicos
